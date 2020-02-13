@@ -1,18 +1,3 @@
-header {
-  display: flex !important;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.item {
-  display: flex !important;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
 .star {
   fill: #000;
   width: 24px;

@@ -1,16 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ListGroup from "react-bootstrap/ListGroup";
 import { Item } from "./Item";
 
 export const List = ({ data = [] }) => (
   <>
     {data && data.length ? (
-      <ListGroup as="ul">
+      <ul className="list-group">
         {data.map(item => (
           <Item key={item.node_id} item={item} />
         ))}
-      </ListGroup>
+      </ul>
     ) : (
       "Ничего не найдено"
     )}

@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ListGroup from "react-bootstrap/ListGroup";
 import { Stars } from "./Stars";
 
 export const Item = ({ item = {} }) => (
-  <ListGroup.Item as="li" className="item">
+  <li className="list-group-item d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center flex-nowrap">
     <div>
       <b>{item.name}</b>{" "}
       <a href={item.html_url} target="_blank" rel="noopener noreferrer">
@@ -12,7 +11,7 @@ export const Item = ({ item = {} }) => (
       </a>
     </div>
     <Stars count={item.stargazers_count} />
-  </ListGroup.Item>
+  </li>
 );
 
 Item.propTypes = {
