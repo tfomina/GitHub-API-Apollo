@@ -1,3 +1,7 @@
+.star-wrapper {
+  white-space: nowrap;
+}
+
 .star {
   fill: #000;
   width: 24px;

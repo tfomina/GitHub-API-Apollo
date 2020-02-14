@@ -1,18 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const Search = ({ handleSearchChange, value }) => (
-  <input
-    type="text"
-    name="search"
-    placeholder="Введите что-нибудь..."
-    onChange={e => handleSearchChange(e.target.value)}
-    className="form-control mx-5"
-    value={value}
-  />
+export const Search = ({ handleNameSearchChange, nameSearch }) => (
+  <div className="flex-grow-1 mx-lg-3 mb-4 mb-lg-0">
+    <input
+      type="text"
+      name="search"
+      placeholder="Поиск по названию репозитория"
+      onChange={e => handleNameSearchChange(e.target.value)}
+      className="form-control"
+      value={nameSearch}
+    />
+  </div>
 );
 
 Search.propTypes = {
-  handleSearchChange: PropTypes.func,
-  value: PropTypes.any
+  nameSearch: PropTypes.string,
+  handleNameSearchChange: PropTypes.func
 };
