@@ -7,8 +7,11 @@ import { Loader } from "./../Loader";
 import { Header } from "./../Header";
 import { Search } from "./../Search";
 import { Licenses } from "./../Licenses";
+import { AppPagination as Pagination } from "./../Pagination";
 
 import "./App.css";
+
+const PER_PAGE = 20;
 
 export const App = () => {
   const [data, setData] = useState([]);
@@ -16,6 +19,8 @@ export const App = () => {
   const [hasError, setHasError] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
   const [license, setLicense] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const fetchData = async () => {
     setHasError(false);
@@ -30,10 +35,11 @@ export const App = () => {
 
       const url = `https://api.github.com/search/repositories?q=${nameSearch}+in:name+language:javascript+created:${prevMonth}${
         licenseKey ? `+license:${licenseKey}` : ""
-      }&sort=stars&order=desc`;
+      }&sort=stars&order=desc&page=${currentPage}&per_page=${PER_PAGE}`;
 
       const response = await axios(url);
       setData(response.data.items);
+      setTotal(response.data.total_count);
     } catch (error) {
       setHasError(true);
       setData([]);
@@ -43,7 +49,7 @@ export const App = () => {
 
   useEffect(() => {
     fetchData();
-  }, [license, nameSearch]);
+  }, [license, nameSearch, currentPage]);
 
   return (
     <Layout>
@@ -58,7 +64,19 @@ export const App = () => {
       <main>
         {hasError && <div>Что-то пошло не так...</div>}
 
-        {isLoading ? <Loader /> : !hasError ? <List data={data} /> : null}
+        {isLoading && <Loader />}
+
+        {data && !isLoading && !hasError && (
+          <>
+            <List data={data} />
+            <Pagination
+              currentPage={currentPage}
+              total={total}
+              itemsPerPage={PER_PAGE}
+              handlePageChange={setCurrentPage}
+            />
+          </>
+        )}
       </main>
     </Layout>
   );
