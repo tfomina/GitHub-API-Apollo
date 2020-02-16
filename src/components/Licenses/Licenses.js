@@ -18,7 +18,7 @@ export const Licenses = ({ license = null, handleLicenseChange }) => {
       backgroundColor: state.isFocused
         ? "#80bdff"
         : state.isSelected
-        ? "#2486FF"
+        ? "#007bff"
         : "#FFF"
     })
   };
@@ -52,6 +52,7 @@ export const Licenses = ({ license = null, handleLicenseChange }) => {
         placeholder="Выберите тип лицензии"
         isSearchable={true}
         isClearable={true}
+        noOptionsMessage={() => "Ничего не найдено"}
       />
     </div>
   );
