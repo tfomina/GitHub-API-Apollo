@@ -61,9 +61,9 @@ export const App = () => {
 
     const licenseKey = (license && license.key) || "";
 
-    return `language:javascript created:${prevMonth} ${
+    return `language:javascript created:>=${prevMonth} ${
       licenseKey ? `license:${licenseKey}` : ""
-    }`;
+    } ${nameSearch}`;
   };
 
   const { loading, error, data, refetch: refetchRepositories } = useQuery(
