@@ -7,7 +7,7 @@ export const List = ({ data = [] }) => (
     {data && data.length ? (
       <ul className="list-group mb-4">
         {data.map(item => (
-          <Item key={item.node_id} item={item} />
+          <Item key={item.node.id} item={item.node} />
         ))}
       </ul>
     ) : (

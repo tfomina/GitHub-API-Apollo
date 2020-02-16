@@ -6,11 +6,11 @@ export const Item = ({ item = {} }) => (
   <li className="list-group-item d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center flex-nowrap">
     <div>
       <b>{item.name}</b>{" "}
-      <a href={item.html_url} target="_blank" rel="noopener noreferrer">
-        {item.full_name}
+      <a href={item.url} target="_blank" rel="noopener noreferrer">
+        {item.name}
       </a>
     </div>
-    <Stars count={item.stargazers_count} />
+    <Stars count={item.stargazers.totalCount} />
   </li>
 );
 
