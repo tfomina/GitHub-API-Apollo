@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
 import Select from "react-select";
+import { useQuery } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
+
+const LICENSES = gql`
+  {
+    licenses {
+      key
+      name
+      id
+    }
+  }
+`;
 
 export const Licenses = ({ license = null, handleLicenseChange }) => {
   const customStyles = {
@@ -23,32 +34,17 @@ export const Licenses = ({ license = null, handleLicenseChange }) => {
     })
   };
 
-  const [options, setOptions] = useState([]);
-
-  const fetchLicenses = async () => {
-    try {
-      const response = await axios("https://api.github.com/licenses");
-      setOptions(response.data);
-    } catch (error) {
-      setOptions([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchLicenses();
-  }, []);
+  const { data } = useQuery(LICENSES);
 
   return (
     <div className="flex-grow-1">
       <Select
         styles={customStyles}
-        isOptionSelected={option =>
-          license && license.node_id === option.node_id
-        }
+        isOptionSelected={option => license && license.id === option.id}
         onChange={handleLicenseChange}
-        options={options}
+        options={(data && data.licenses) || []}
         getOptionLabel={option => option.name}
-        getOptionValue={option => option.node_id}
+        getOptionValue={option => option.id}
         placeholder="Выберите тип лицензии"
         isSearchable={true}
         isClearable={true}
