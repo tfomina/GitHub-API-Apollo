@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  HttpLink
+} from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
 import { Layout } from "./../Layout";
 import { List } from "./../List";
 import { Loader } from "./../Loader";
@@ -12,6 +19,25 @@ import { Pagination } from "./../Pagination";
 import "./App.css";
 
 const PER_PAGE = 20;
+
+const httpLink = new HttpLink({ uri: "https://api.github.com/graphql" });
+
+const authLink = new ApolloLink((operation, forward) => {
+  const token = "d7e5de98c1bb37b14e9e7a73b63c33e52eb1807d";
+
+  operation.setContext({
+    headers: {
+      authorization: token ? `Bearer ${token}` : ""
+    }
+  });
+
+  return forward(operation);
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
+});
 
 export const App = () => {
   const [data, setData] = useState([]);
@@ -52,32 +78,34 @@ export const App = () => {
   }, [license, nameSearch, currentPage]);
 
   return (
-    <Layout>
-      <Header>
-        <Search
-          handleNameSearchChange={setNameSearch}
-          nameSearch={nameSearch}
-        />
-        <Licenses license={license} handleLicenseChange={setLicense} />
-      </Header>
+    <ApolloProvider client={client}>
+      <Layout>
+        <Header>
+          <Search
+            handleNameSearchChange={setNameSearch}
+            nameSearch={nameSearch}
+          />
+          <Licenses license={license} handleLicenseChange={setLicense} />
+        </Header>
 
-      <main>
-        {hasError && <div>Что-то пошло не так...</div>}
+        <main>
+          {hasError && <div>Что-то пошло не так...</div>}
 
-        {isLoading && <Loader />}
+          {isLoading && <Loader />}
 
-        {data && !isLoading && !hasError && (
-          <>
-            <List data={data} />
-            <Pagination
-              currentPage={currentPage}
-              total={total}
-              itemsPerPage={PER_PAGE}
-              handlePageChange={setCurrentPage}
-            />
-          </>
-        )}
-      </main>
-    </Layout>
+          {data && !isLoading && !hasError && (
+            <>
+              <List data={data} />
+              <Pagination
+                currentPage={currentPage}
+                total={total}
+                itemsPerPage={PER_PAGE}
+                handlePageChange={setCurrentPage}
+              />
+            </>
+          )}
+        </main>
+      </Layout>
+    </ApolloProvider>
   );
 };
