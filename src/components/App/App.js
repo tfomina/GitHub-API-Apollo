@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import { useDebounce } from "use-debounce";
 import { Layout } from "./../Layout";
 import { List } from "./../List";
 import { Loader } from "./../Loader";
@@ -22,9 +21,6 @@ export const App = () => {
   const [license, setLicense] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
-
-  const debouncedNameSearch = useDebounce(nameSearch, 2000);
-  console.log("debouncedNameSearch ", debouncedNameSearch);
 
   const fetchData = async () => {
     setHasError(false);
