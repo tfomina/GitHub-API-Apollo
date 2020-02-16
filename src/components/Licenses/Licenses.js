@@ -4,6 +4,25 @@ import axios from "axios";
 import Select from "react-select";
 
 export const Licenses = ({ license = null, handleLicenseChange }) => {
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      borderWidth: "1px",
+      borderColor: state.isFocused ? "#80bdff!important" : "#ced4da!important",
+      boxShadow: state.isFocused ? "0 0 0 0.2rem rgba(0,123,255,.25)" : "none",
+      borderRadius: ".25rem",
+      color: "#495057"
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused
+        ? "#80bdff"
+        : state.isSelected
+        ? "#2486FF"
+        : "#FFF"
+    })
+  };
+
   const [options, setOptions] = useState([]);
 
   const fetchLicenses = async () => {
@@ -22,6 +41,7 @@ export const Licenses = ({ license = null, handleLicenseChange }) => {
   return (
     <div className="flex-grow-1">
       <Select
+        styles={customStyles}
         isOptionSelected={option =>
           license && license.node_id === option.node_id
         }
