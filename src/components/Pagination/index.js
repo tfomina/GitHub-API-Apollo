@@ -1,1 +1,1 @@
-export { AppPagination } from "./Pagination";
+export { AppPagination as Pagination } from "./Pagination";

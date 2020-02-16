@@ -7,7 +7,7 @@ import { Loader } from "./../Loader";
 import { Header } from "./../Header";
 import { Search } from "./../Search";
 import { Licenses } from "./../Licenses";
-import { AppPagination as Pagination } from "./../Pagination";
+import { Pagination } from "./../Pagination";
 
 import "./App.css";
 
