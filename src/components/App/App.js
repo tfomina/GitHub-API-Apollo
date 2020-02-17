@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import { useDebounce } from "use-debounce";
 import { Layout } from "./../Layout";
 import { List } from "./../List";
 import { Loader } from "./../Loader";
@@ -50,9 +51,11 @@ export const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const [debouncedNameSearch] = useDebounce(nameSearch, 500);
+
   useEffect(() => {
     refetchRepositories();
-  }, [license, nameSearch]);
+  }, [license, debouncedNameSearch]);
 
   const createQuery = () => {
     const prevMonth = moment()
@@ -63,7 +66,7 @@ export const App = () => {
 
     return `language:javascript created:>=${prevMonth} ${
       licenseKey ? `license:${licenseKey}` : ""
-    } ${nameSearch}`;
+    } ${debouncedNameSearch}`;
   };
 
   const { loading, error, data, refetch: refetchRepositories } = useQuery(
