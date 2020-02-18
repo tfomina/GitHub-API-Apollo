@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Select from "react-select";
 import { useQuery } from "@apollo/react-hooks";
@@ -32,7 +32,7 @@ export const Licenses = ({ license = null, handleLicenseChange }) => {
         ? "#007bff"
         : "#FFF"
     }),
-    indicatorSeparator: (provided, state) => ({
+    indicatorSeparator: provided => ({
       ...provided,
       backgroundColor: "#ced4da"
     })
