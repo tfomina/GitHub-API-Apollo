@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import moment from "moment";
 import { useDebounce } from "use-debounce";
 import { Layout } from "./../Layout";
@@ -13,21 +13,20 @@ import { gql } from "apollo-boost";
 
 import "./App.css";
 
-const PER_PAGE = 20;
-
 const REPOSITORIES = gql`
-  query Repositories($queryString: String!) {
+  query Repositories($queryString: String!, $perPage: Int) {
     rateLimit {
       limit
       cost
       remaining
       resetAt
     }
-    search(query: $queryString, type: REPOSITORY, first: 20) {
+    search(query: $queryString, type: REPOSITORY, first: $perPage) {
       repositoryCount
       pageInfo {
         endCursor
         startCursor
+        hasNextPage
       }
       edges {
         node {
@@ -38,6 +37,11 @@ const REPOSITORIES = gql`
             stargazers {
               totalCount
             }
+            licenseInfo {
+              id
+              name
+              key
+            }
           }
         }
       }
@@ -45,17 +49,45 @@ const REPOSITORIES = gql`
   }
 `;
 
+const initialState = {
+  nameSearch: "",
+  license: {},
+  currentPage: 1,
+  total: 0
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_CURRENT_PAGE":
+      const { currentPage } = action.payload;
+      return {
+        ...state,
+        currentPage
+      };
+    case "SET_NAME_SEARCH":
+      const { nameSearch } = action.payload;
+      return {
+        ...state,
+        nameSearch,
+        currentPage: 1
+      };
+    case "SET_lICENSE":
+      const { license } = action.payload;
+      return {
+        ...state,
+        license,
+        currentPage: 1
+      };
+    default:
+      throw new Error();
+  }
+};
+
 export const App = () => {
-  const [nameSearch, setNameSearch] = useState("");
-  const [license, setLicense] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
+  const { nameSearch, license, currentPage } = state;
   const [debouncedNameSearch] = useDebounce(nameSearch, 500);
-
-  useEffect(() => {
-    refetchRepositories();
-  }, [license, debouncedNameSearch]);
 
   const createQuery = () => {
     const prevMonth = moment()
@@ -73,19 +105,51 @@ export const App = () => {
     REPOSITORIES,
     {
       variables: {
-        queryString: createQuery()
+        queryString: createQuery(),
+        perPage: 20
       }
     }
   );
+
+  useEffect(() => {
+    refetchRepositories();
+  }, [license, debouncedNameSearch, refetchRepositories]);
+
+  const handleLicenseChange = value => {
+    dispatch({
+      type: "SET_lICENSE",
+      payload: {
+        license: value
+      }
+    });
+  };
+
+  const handleNameSearchChange = value => {
+    dispatch({
+      type: "SET_NAME_SEARCH",
+      payload: {
+        nameSearch: value
+      }
+    });
+  };
+
+  const handlePageChange = value => {
+    dispatch({
+      type: "SET_CURRENT_PAGE",
+      payload: {
+        currentPage: value
+      }
+    });
+  };
 
   return (
     <Layout>
       <Header>
         <Search
-          handleNameSearchChange={setNameSearch}
+          handleNameSearchChange={handleNameSearchChange}
           nameSearch={nameSearch}
         />
-        <Licenses license={license} handleLicenseChange={setLicense} />
+        <Licenses license={license} handleLicenseChange={handleLicenseChange} />
       </Header>
 
       <main>
@@ -96,12 +160,12 @@ export const App = () => {
         {data && !loading && !error && (
           <>
             <List data={data.search.edges} />
-            <Pagination
+            {/*<Pagination
               currentPage={currentPage}
-              total={total}
+              total={data.search.repositoryCount}
               itemsPerPage={PER_PAGE}
-              handlePageChange={setCurrentPage}
-            />
+              handlePageChange={handlePageChange}
+            />*/}
           </>
         )}
       </main>
